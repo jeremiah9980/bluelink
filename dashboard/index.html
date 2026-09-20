@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1417">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ioniq 5">
+<meta name="robots" content="noindex">
+<title>Ioniq 5 Remote</title>
+<style>
+:root{
+  --bg:#f3f5f6; --card:#ffffff; --ink:#12181c; --muted:#5d6b73; --line:#e1e6e9;
+  --accent:#0a7f8c; --accent-ink:#ffffff; --good:#1f8a4c; --warn:#b26a00; --bad:#c2372d;
+  --ring-track:#e3e8eb; --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1417; --card:#182026; --ink:#eaf0f2; --muted:#93a3ab; --line:#26323a;
+    --accent:#35c2cf; --accent-ink:#06282c; --good:#4cc47f; --warn:#f0a93a; --bad:#ff6b5f;
+    --ring-track:#26323a; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1417; --card:#182026; --ink:#eaf0f2; --muted:#93a3ab; --line:#26323a;
+  --accent:#35c2cf; --accent-ink:#06282c; --good:#4cc47f; --warn:#f0a93a; --bad:#ff6b5f;
+  --ring-track:#26323a; --shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font:15px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  padding:max(16px,env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));}
+main{max-width:760px;margin:0 auto;display:grid;gap:14px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+h1{font-size:20px;margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+.hero{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+.ring{width:132px;height:132px;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.pct b{font-size:34px;letter-spacing:-.02em;display:block;line-height:1}
+.pct span{font-size:12px;color:var(--muted)}
+.big{font-size:28px;font-weight:650;letter-spacing:-.02em}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:600;background:var(--bg);border:1px solid var(--line)}
+.pill.good{color:var(--good)} .pill.warn{color:var(--warn)} .pill.bad{color:var(--bad)}
+.dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (min-width:600px){.grid{grid-template-columns:repeat(4,1fr)}}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;min-height:78px;box-shadow:var(--shadow)}
+.tile .k{font-size:12px;color:var(--muted)}
+.tile .v{font-size:18px;font-weight:650;margin-top:4px}
+.tile .v.good{color:var(--good)} .tile .v.warn{color:var(--warn)} .tile .v.bad{color:var(--bad)}
+.tile .s{font-size:12px;color:var(--muted);margin-top:2px}
+.tile a{color:var(--accent)}
+h2{font-size:14px;margin:0 0 10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.btns{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media (min-width:600px){.btns{grid-template-columns:repeat(4,1fr)}}
+button{font:inherit;cursor:pointer;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);
+  padding:12px 10px;font-weight:600;min-height:46px;touch-action:manipulation}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+button.danger{color:var(--bad)}
+button:disabled{opacity:.5;cursor:default}
+button.ghost{background:transparent;border:none;padding:8px;min-height:auto;color:var(--muted)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.field{display:grid;gap:4px;flex:1;min-width:120px}
+.field label{font-size:12px;color:var(--muted)}
+input,select{font:inherit;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+input[type=range]{padding:0;accent-color:var(--accent)}
+input[type=checkbox]{accent-color:var(--accent)}
+@media (max-width:480px){header .ghost .lbl{display:none} header .ghost{font-size:20px}}
+.sep{height:1px;background:var(--line);margin:14px 0}
+.runs{display:grid;gap:6px;font-size:13.5px}
+.run{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--line)}
+.run:first-child{border-top:none}
+.run a{color:var(--ink);text-decoration:none}
+.muted{color:var(--muted)}
+.banner{border-radius:12px;padding:12px 14px;font-size:14px;border:1px solid var(--line);background:var(--card)}
+.banner.err{border-color:var(--bad);color:var(--bad)}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);max-width:calc(100% - 32px);
+  background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.25);display:none;z-index:20}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;z-index:30;padding:16px}
+.modal.open{display:flex}
+.sheet{background:var(--card);border-radius:18px;padding:18px;width:100%;max-width:480px;display:grid;gap:12px}
+.sheet h3{margin:0;font-size:17px}
+.spark{width:100%;height:70px;display:block}
+.hint{font-size:12.5px;color:var(--muted)}
+code{font-size:12.5px}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1 id="carName">Ioniq 5</h1>
+      <div class="sub" id="updated">Not connected</div>
+    </div>
+    <div class="row">
+      <button class="ghost" id="reloadBtn" title="Reload" aria-label="Reload">↻<span class="lbl"> Reload</span></button>
+      <button class="ghost" id="settingsBtn" aria-label="Settings">⚙︎<span class="lbl"> Settings</span></button>
+    </div>
+  </header>
+
+  <div id="banner" class="banner" style="display:none"></div>
+
+  <section class="card hero" id="hero" hidden>
+    <div class="ring">
+      <svg width="132" height="132" viewBox="0 0 132 132" aria-hidden="true">
+        <circle cx="66" cy="66" r="56" fill="none" stroke="var(--ring-track)" stroke-width="12"/>
+        <circle id="ringArc" cx="66" cy="66" r="56" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round"
+          stroke-dasharray="351.86" stroke-dashoffset="351.86"/>
+      </svg>
+      <div class="pct"><div><b id="soc">–</b><span>battery</span></div></div>
+    </div>
+    <div style="display:grid;gap:6px">
+      <div><span class="big" id="range">–</span> <span class="muted" id="rangeUnit"></span></div>
+      <div class="row" id="heroPills"></div>
+      <div class="sub" id="chargeDetail"></div>
+    </div>
+  </section>
+
+  <section class="grid" id="tiles" hidden></section>
+
+  <section class="card" id="historyCard" hidden>
+    <h2>Battery · last 7 days</h2>
+    <svg class="spark" id="spark" viewBox="0 0 300 70" preserveAspectRatio="none" role="img" aria-label="Battery history"></svg>
+    <div class="row" style="justify-content:space-between"><span class="hint" id="sparkMin"></span><span class="hint" id="sparkMax"></span></div>
+  </section>
+
+  <section class="card" id="controls" hidden>
+    <h2>Controls</h2>
+    <div class="btns">
+      <button class="primary" data-cmd="lock">🔒 Lock</button>
+      <button class="danger" data-cmd="unlock">🔓 Unlock</button>
+      <button data-cmd="charge_start">⚡ Start charge</button>
+      <button data-cmd="charge_stop">⏹ Stop charge</button>
+    </div>
+    <div class="sep"></div>
+    <h2>Climate</h2>
+    <div class="row">
+      <div class="field"><label for="temp">Temperature <b id="tempVal">70°F</b></label>
+        <input type="range" id="temp" min="62" max="82" step="1" value="70"></div>
+      <div class="field" style="max-width:140px"><label for="duration">Run for</label>
+        <select id="duration"><option>5</option><option selected>10</option><option>15</option><option>20</option><option>30</option></select></div>
+      <label class="row" style="gap:6px;font-size:14px"><input type="checkbox" id="defrost" style="width:auto"> Defrost</label>
+    </div>
+    <div class="btns" style="margin-top:10px">
+      <button class="primary" data-cmd="climate_start">❄︎ Start climate</button>
+      <button data-cmd="climate_stop">Stop climate</button>
+    </div>
+    <div class="sep"></div>
+    <h2>Charge limits</h2>
+    <div class="row">
+      <div class="field"><label for="ac">AC (home / Level 2)</label><select id="ac"></select></div>
+      <div class="field"><label for="dc">DC fast charge</label><select id="dc"></select></div>
+    </div>
+    <div class="btns" style="margin-top:10px"><button data-cmd="charge_limits">Set limits</button></div>
+    <div class="sep"></div>
+    <div class="btns">
+      <button data-wf="status">Update status</button>
+      <button data-cmd="refresh">Wake car &amp; refresh</button>
+    </div>
+    <p class="hint">“Update status” reads Hyundai's last saved data (free, doesn't touch the car). “Wake car &amp; refresh” asks the car directly. It drains the 12V battery a little, so don't use it too often.</p>
+  </section>
+
+  <section class="card" id="activity" hidden>
+    <h2>Recent activity</h2>
+    <div class="runs" id="runs"><span class="muted">Loading…</span></div>
+  </section>
+</main>
+
+<div class="modal" id="settings" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+  <div class="sheet">
+    <h3 id="setTitle">Connect to GitHub</h3>
+    <div class="field"><label for="repo">Repository (owner/name)</label><input id="repo" placeholder="jeremiah9980/ioniq-bluelink" autocapitalize="off" autocorrect="off"></div>
+    <div class="field"><label for="token">Fine-grained token</label><input id="token" type="password" placeholder="github_pat_…" autocomplete="off"></div>
+    <p class="hint">Create one at <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens</a>. Give it access to <b>only this repository</b>, with these permissions: <b>Actions: Read and write</b> and <b>Contents: Read-only</b>. The token is saved only in this browser.</p>
+    <div class="row" style="justify-content:flex-end">
+      <button class="ghost" id="forget">Forget token</button>
+      <button id="cancelSet">Cancel</button>
+      <button class="primary" id="saveSet">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="confirm" role="dialog" aria-modal="true" aria-labelledby="cTitle">
+  <div class="sheet">
+    <h3 id="cTitle">Confirm</h3>
+    <div id="cBody" class="muted"></div>
+    <div class="row" style="justify-content:flex-end">
+      <button id="cNo">Cancel</button>
+      <button class="primary" id="cYes">Send</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const API = "https://api.github.com";
+  const store = {
+    get(k){ try { return localStorage.getItem("ioniq." + k) || ""; } catch { return ""; } },
+    set(k,v){ try { v ? localStorage.setItem("ioniq." + k, v) : localStorage.removeItem("ioniq." + k); } catch {} }
+  };
+  let cfg = { repo: store.get("repo") || (location.hash.slice(1).includes("/") ? location.hash.slice(1) : ""), token: store.get("token") };
+  let busy = false;
+
+  const LABELS = {
+    refresh: "Wake car & refresh", lock: "Lock", unlock: "Unlock", climate_start: "Start climate",
+    climate_stop: "Stop climate", charge_start: "Start charging", charge_stop: "Stop charging",
+    charge_limits: "Set charge limits", status: "Update status"
+  };
+
+  // ---------- GitHub API
+  async function gh(path, opts = {}) {
+    const res = await fetch(API + path, {
+      cache: "no-store", ...opts,
+      headers: { "Authorization": "Bearer " + cfg.token, "X-GitHub-Api-Version": "2022-11-28",
+                 "Accept": "application/vnd.github+json", ...(opts.headers || {}) }
+    });
+    if (!res.ok) {
+      let msg = res.status + " " + res.statusText;
+      try { const j = await res.json(); if (j.message) msg = res.status + ": " + j.message; } catch {}
+      const e = new Error(msg); e.status = res.status; throw e;
+    }
+    return res;
+  }
+  const raw = (file) => gh(`/repos/${cfg.repo}/contents/${file}?ref=status&t=${Date.now()}`,
+                           { headers: { Accept: "application/vnd.github.raw+json" } });
+
+  // ---------- formatting
+  const ago = (iso) => {
+    if (!iso) return "unknown";
+    const t = new Date(iso); if (isNaN(t)) return iso;
+    const m = Math.round((Date.now() - t) / 60000);
+    if (m < 1) return "just now"; if (m < 60) return m + " min ago";
+    const h = Math.round(m / 60); if (h < 36) return h + " hr ago";
+    return t.toLocaleDateString(undefined, { month: "short", day: "numeric" }) + " " + t.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  };
+  const yes = (v) => v === true || v === 1 || v === "true";
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+  const num = (v, d = 0) => (v === null || v === undefined || v === "" || isNaN(+v)) ? "–" : (+v).toLocaleString(undefined, { maximumFractionDigits: d });
+  const pill = (txt, cls) => `<span class="pill ${cls}"><span class="dot"></span>${esc(txt)}</span>`;
+  const tile = (k, v, s = "", cls = "") => `<div class="tile"><div class="k">${esc(k)}</div><div class="v ${cls}">${v}</div>${s ? `<div class="s">${s}</div>` : ""}</div>`;
+
+  function banner(msg, err) {
+    const b = $("banner");
+    if (!msg) { b.style.display = "none"; return; }
+    b.className = "banner" + (err ? " err" : ""); b.innerHTML = msg; b.style.display = "block";
+  }
+  let toastTimer;
+  function toast(msg, ms = 3500) {
+    const t = $("toast"); t.textContent = msg; t.style.display = "block";
+    clearTimeout(toastTimer); if (ms) toastTimer = setTimeout(() => (t.style.display = "none"), ms);
+  }
+
+  // ---------- render
+  function render(s, last) {
+    const b = s.battery || {}, sec = s.security || {}, cl = s.climate || {}, loc = s.location || {};
+    $("carName").textContent = [s.year, s.name || "Ioniq 5"].filter(Boolean).join(" ");
+    $("updated").textContent = "Car reported " + ago(s.last_updated_at) + " · checked " + ago(s.fetched_at);
+    const pct = Math.max(0, Math.min(100, +b.percent || 0));
+    $("soc").textContent = b.percent == null ? "–" : pct + "%";
+    $("ringArc").style.strokeDashoffset = 351.86 * (1 - pct / 100);
+    $("ringArc").style.stroke = pct < 20 ? "var(--bad)" : pct < 35 ? "var(--warn)" : "var(--accent)";
+    $("range").textContent = num(b.range);
+    $("rangeUnit").textContent = (b.range_unit || "mi") + " range";
+
+    const pills = [];
+    if (yes(b.is_charging)) pills.push(pill("Charging" + (b.charging_power_kw ? ` · ${num(b.charging_power_kw,1)} kW` : ""), "good"));
+    else if (yes(b.is_plugged_in)) pills.push(pill("Plugged in", "warn"));
+    else pills.push(pill("Unplugged", ""));
+    pills.push(yes(sec.is_locked) ? pill("Locked", "good") : pill("Unlocked", "bad"));
+    if (yes(cl.is_on)) pills.push(pill("Climate on", "good"));
+    $("heroPills").innerHTML = pills.join("");
+    const lim = b.charge_limit_ac ? `AC limit ${b.charge_limit_ac}% · DC limit ${b.charge_limit_dc}%` : "";
+    const full = yes(b.is_charging) && +b.minutes_to_full > 0 ? `About ${Math.floor(b.minutes_to_full/60)}h ${b.minutes_to_full%60}m until it reaches the limit · ` : "";
+    $("chargeDetail").textContent = full + lim;
+
+    const openThings = [];
+    Object.entries(sec.doors_open || {}).forEach(([k, v]) => yes(v) && openThings.push(k.replace(/_/g, " ")));
+    Object.entries(sec.windows_open || {}).forEach(([k, v]) => yes(v) && openThings.push(k.replace(/_/g, " ")));
+    ["trunk", "hood", "sunroof"].forEach(k => yes(sec[k + "_open"]) && openThings.push(k));
+    const tiresBad = Object.entries(s.tires_warning || {}).filter(([, v]) => yes(v)).map(([k]) => k.replace("_", " "));
+    const mapUrl = loc.lat != null ? `https://maps.apple.com/?q=Ioniq%205&ll=${loc.lat},${loc.lon}` : "";
+    const aux = +b.aux_12v_percent;
+
+    $("tiles").innerHTML = [
+      tile("Doors & windows", openThings.length ? "Open" : "All closed", openThings.length ? esc(openThings.join(", ")) : "", openThings.length ? "bad" : "good"),
+      tile("Climate", yes(cl.is_on) ? "On" : "Off", cl.set_temp ? `set ${num(cl.set_temp)}°` + (yes(cl.defrost_on) ? " · defrost" : "") : ""),
+      tile("Outside", cl.outside_temp != null ? num(cl.outside_temp) + "°" : "–"),
+      tile("Tires", tiresBad.length ? "Check" : "OK", tiresBad.length ? esc(tiresBad.join(", ")) + " low" : "no pressure warnings", tiresBad.length ? "warn" : "good"),
+      tile("12V battery", isNaN(aux) ? "–" : aux + "%", aux && aux < 60 ? "low, so avoid waking the car" : "", aux && aux < 60 ? "warn" : ""),
+      tile("Battery health", b.soh_percent ? num(b.soh_percent) + "%" : "–", "state of health"),
+      tile("Odometer", num(s.odometer), esc(s.odometer_unit || "mi")),
+      tile("Location", mapUrl ? `<a href="${mapUrl}" target="_blank" rel="noopener">Open map ↗</a>` : "–", loc.updated_at ? "as of " + ago(loc.updated_at) : "")
+    ].join("");
+
+    if (last && last.action) {
+      const st = (last.status || "").toUpperCase();
+      const cls = st === "SUCCESS" ? "good" : st === "PENDING" || st === "UNKNOWN" ? "warn" : "bad";
+      $("tiles").insertAdjacentHTML("beforeend",
+        tile("Last command", esc(LABELS[last.action] || last.action), `<span class="pill ${cls}" style="padding:1px 8px">${esc(st || "?")}</span> ${ago(last.finished_at || last.requested_at)}`));
+    }
+    if (b.charge_limit_ac) $("ac").value = String(b.charge_limit_ac);
+    if (b.charge_limit_dc) $("dc").value = String(b.charge_limit_dc);
+    ["hero", "tiles", "controls", "activity"].forEach(id => $(id).hidden = false);
+  }
+
+  function renderHistory(text) {
+    const since = Date.now() - 7 * 864e5;
+    const pts = text.split("\n").filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } })
+      .filter(p => p && p.soc != null && new Date(p.t) >= since).map(p => ({ t: +new Date(p.t), v: +p.soc }));
+    if (pts.length < 2) { $("historyCard").hidden = true; return; }
+    const t0 = pts[0].t, t1 = pts[pts.length - 1].t || t0 + 1;
+    const x = t => ((t - t0) / Math.max(1, t1 - t0)) * 300, y = v => 66 - (v / 100) * 62;
+    const d = pts.map((p, i) => (i ? "L" : "M") + x(p.t).toFixed(1) + " " + y(p.v).toFixed(1)).join(" ");
+    $("spark").innerHTML =
+      `<path d="${d} L300 70 L0 70 Z" fill="var(--accent)" opacity=".12"/>` +
+      `<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
+    const vals = pts.map(p => p.v);
+    $("sparkMin").textContent = "low " + Math.min(...vals) + "%";
+    $("sparkMax").textContent = "high " + Math.max(...vals) + "%";
+    $("historyCard").hidden = false;
+  }
+
+  async function loadRuns() {
+    try {
+      const [cmd, st] = await Promise.all([
+        gh(`/repos/${cfg.repo}/actions/workflows/command.yml/runs?per_page=8`).then(r => r.json()),
+        gh(`/repos/${cfg.repo}/actions/workflows/status.yml/runs?per_page=3`).then(r => r.json())
+      ]);
+      const runs = [...(cmd.workflow_runs || []), ...(st.workflow_runs || [])]
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 8);
+      $("runs").innerHTML = runs.length ? runs.map(r => {
+        const done = r.status === "completed";
+        const ok = r.conclusion === "success";
+        const icon = !done ? "⏳" : ok ? "✅" : r.conclusion === "cancelled" ? "⚪️" : "❌";
+        const title = r.path.endsWith("status.yml") ? (r.event === "schedule" ? "Hourly status check" : "Update status") : (r.display_title || r.name);
+        return `<div class="run"><a href="${r.html_url}" target="_blank" rel="noopener">${icon} ${esc(title)}</a><span class="muted">${ago(r.created_at)}</span></div>`;
+      }).join("") : `<span class="muted">No runs yet.</span>`;
+    } catch (e) { $("runs").innerHTML = `<span class="muted">Couldn't load activity (${esc(e.message)})</span>`; }
+  }
+
+  async function load() {
+    if (!cfg.repo || !cfg.token) { openSettings(); banner("Add your repository name and a GitHub token to get started."); return; }
+    banner("");
+    try {
+      const [s, last, hist] = await Promise.all([
+        raw("status.json").then(r => r.json()),
+        raw("last_command.json").then(r => r.json()).catch(() => null),
+        raw("history.jsonl").then(r => r.text()).catch(() => "")
+      ]);
+      render(s, last); renderHistory(hist);
+    } catch (e) {
+      if (e.status === 401) banner("GitHub rejected the token. It may be wrong or expired. Open <b>Settings</b> to replace it.", true);
+      else if (e.status === 404) {
+        banner(`No status data yet, or <code>${esc(cfg.repo)}</code> can't be found with this token. If the repo name is right, tap <b>Update status</b> below and give it about a minute.`);
+        $("controls").hidden = false; $("activity").hidden = false;
+      } else banner("Couldn't load status: " + esc(e.message), true);
+    }
+    loadRuns();
+  }
+
+  // ---------- dispatch
+  async function dispatch(workflow, inputs) {
+    if (busy) return; busy = true;
+    document.querySelectorAll("[data-cmd],[data-wf]").forEach(b => b.disabled = true);
+    const label = LABELS[inputs?.action || workflow] || workflow;
+    const since = Date.now() - 10000;
+    try {
+      await gh(`/repos/${cfg.repo}/actions/workflows/${workflow}.yml/dispatches`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ref: "main", inputs: inputs || {} })
+      });
+      toast(`${label}: sent to GitHub…`, 0);
+      let run = null;
+      for (let i = 0; i < 90; i++) {           // poll up to ~6 min
+        await new Promise(r => setTimeout(r, 4000));
+        if (!run) {
+          const j = await gh(`/repos/${cfg.repo}/actions/workflows/${workflow}.yml/runs?per_page=5&event=workflow_dispatch`).then(r => r.json());
+          run = (j.workflow_runs || []).find(r => new Date(r.created_at) >= since);
+          if (run) loadRuns();
+          continue;
+        }
+        run = await gh(`/repos/${cfg.repo}/actions/runs/${run.id}`).then(r => r.json());
+        toast(`${label}: ${run.status === "queued" ? "waiting for a runner…" : "talking to the car…"}`, 0);
+        if (run.status === "completed") break;
+      }
+      if (run && run.status === "completed") {
+        toast(run.conclusion === "success" ? `${label}: done ✓` : `${label}: ${run.conclusion}. Check Recent activity for details`, 6000);
+      } else toast(`${label}: still running. Check back in a minute`, 6000);
+      await load();
+    } catch (e) {
+      toast("", 1);
+      if (e.status === 403 || e.status === 404) banner(`GitHub refused to start the run (${esc(e.message)}). Make sure the token has <b>Actions: Read and write</b> access to ${esc(cfg.repo)} and that the default branch is <code>main</code>.`, true);
+      else banner("Couldn't send the command: " + esc(e.message), true);
+    } finally {
+      busy = false; document.querySelectorAll("[data-cmd],[data-wf]").forEach(b => b.disabled = false);
+    }
+  }
+
+  function ask(title, body) {
+    return new Promise(res => {
+      $("cTitle").textContent = title; $("cBody").innerHTML = body; $("confirm").classList.add("open");
+      const done = (v) => { $("confirm").classList.remove("open"); $("cYes").onclick = $("cNo").onclick = null; res(v); };
+      $("cYes").onclick = () => done(true); $("cNo").onclick = () => done(false);
+    });
+  }
+
+  document.addEventListener("click", async (ev) => {
+    const b = ev.target.closest("[data-cmd],[data-wf]"); if (!b || b.disabled) return;
+    if (b.dataset.wf) return dispatch(b.dataset.wf);
+    const action = b.dataset.cmd;
+    const inputs = { action, temp: $("temp").value, duration: $("duration").value,
+                     defrost: $("defrost").checked ? "true" : "false", ac_limit: $("ac").value, dc_limit: $("dc").value };
+    let body = `Send <b>${esc(LABELS[action])}</b> to the car?`;
+    if (action === "unlock") body = "<b>Unlock the car</b> remotely? It will stay unlocked until someone locks it again.";
+    if (action === "climate_start") body = `Start climate at <b>${inputs.temp}°F</b> for <b>${inputs.duration} min</b>${inputs.defrost === "true" ? " with defrost" : ""}?`;
+    if (action === "charge_limits") body = `Set charge limits to <b>AC ${inputs.ac_limit}%</b> and <b>DC ${inputs.dc_limit}%</b>?`;
+    if (action === "refresh") body = "Wake the car to get fresh data? This uses a little 12V battery. Use <b>Update status</b> for routine checks.";
+    if (await ask(LABELS[action], body)) dispatch("command", inputs);
+  });
+
+  // ---------- settings
+  function openSettings() { $("repo").value = cfg.repo; $("token").value = cfg.token; $("settings").classList.add("open"); }
+  $("settingsBtn").onclick = openSettings;
+  $("cancelSet").onclick = () => $("settings").classList.remove("open");
+  $("forget").onclick = () => { cfg.token = ""; store.set("token", ""); $("token").value = ""; toast("Token removed from this browser"); };
+  $("saveSet").onclick = () => {
+    cfg.repo = $("repo").value.trim().replace(/^https?:\/\/github\.com\//, "").replace(/\/$/, "");
+    cfg.token = $("token").value.trim();
+    store.set("repo", cfg.repo); store.set("token", cfg.token);
+    $("settings").classList.remove("open"); load();
+  };
+  $("reloadBtn").onclick = load;
+  $("temp").oninput = () => ($("tempVal").textContent = $("temp").value + "°F");
+  ["ac", "dc"].forEach(id => $(id).innerHTML = [50,60,70,80,90,100].map(v => `<option ${v===80?"selected":""}>${v}</option>`).join(""));
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && !busy && cfg.token) load(); });
+
+  load();
+})();
+</script>
+</body>
+</html>
